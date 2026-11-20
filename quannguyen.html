@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101010">
+<title>DPI SUPER</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101010;color:#f5f5f5;font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+.container{width:min(100% - 32px,980px);margin:auto}
+header{padding:22px 0;border-bottom:1px solid #292929}
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:21px;font-weight:800;letter-spacing:1px}
+.logo span{color:#55d8c8}
+nav a,.btn{color:#fff;text-decoration:none;font-size:14px}
+nav a{padding:9px 13px;border:1px solid #3a3a3a;border-radius:8px}
+.hero{text-align:center;padding:48px 0 28px}
+.hero h1{font-size:clamp(30px,7vw,48px);line-height:1.1;margin:0 0 12px}
+.hero p{color:#aaa;margin:0 auto;max-width:560px;font-size:15px}
+.section-title{text-align:center;margin:34px 0 22px}
+.section-title h2{font-size:26px;margin:0 0 6px}
+.section-title p{color:#999;font-size:14px;margin:0}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:#191919;border:1px solid #343434;border-radius:13px;padding:20px}
+.card.pro{border-color:#55d8c8}
+.label{font-size:12px;color:#aaa;font-weight:bold;letter-spacing:1px}
+.card h3{font-size:23px;margin:9px 0}
+.price{font-size:34px;font-weight:800;margin:8px 0}
+.price small{font-size:13px;color:#aaa}
+.card p{font-size:13px;color:#bbb;min-height:40px}
+ul{padding-left:18px;color:#ccc;font-size:13px}
+li{margin:7px 0}
+.btn{display:block;text-align:center;background:#55d8c8;color:#101010;font-weight:700;padding:11px;border-radius:8px;margin-top:18px;border:0;cursor:pointer;width:100%}
+.pro .btn{background:#55d8c8}
+.payment{display:grid;grid-template-columns:1fr 270px;gap:22px;align-items:center;background:#191919;border:1px solid #343434;border-radius:13px;padding:22px}
+.payment p{font-size:14px;color:#bbb}
+.qr{width:100%;max-width:250px;background:#fff;padding:10px;border-radius:10px;display:block;margin:auto}
+.small{font-size:12px;color:#888}
+.devices{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.devices span{border:1px solid #444;border-radius:7px;padding:8px 12px;font-size:13px;color:#ccc}
+footer{margin-top:45px;padding:22px 0;border-top:1px solid #292929;color:#888;font-size:12px;text-align:center}
+.modal{display:none;position:fixed;inset:0;background:#000b;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}
+.dialog{background:#1c1c1c;border:1px solid #444;border-radius:12px;padding:22px;width:min(100%,380px)}
+.dialog input{width:100%;padding:12px;background:#101010;border:1px solid #444;border-radius:8px;color:white;margin:10px 0}
+.close{float:right;background:none;border:0;color:#ccc;font-size:22px;cursor:pointer}
+
+
+.login-box{max-width:420px;margin:32px auto;background:#191919;border:1px solid #343434;border-radius:13px;padding:22px}
+.login-box h2{margin:0 0 14px;font-size:22px}
+.login-box input{width:100%;padding:11px 12px;margin-bottom:10px;background:#101010;border:1px solid #3a3a3a;border-radius:8px;color:#fff;font-size:14px}
+.auth-actions{display:flex;gap:10px;margin-top:6px}
+.auth-actions button{flex:1;padding:10px 12px;border-radius:8px;border:0;font-weight:700;cursor:pointer;font-size:14px}
+.btn-register{background:#2a2a2a;color:#fff;border:1px solid #444 !important}
+.btn-login{background:#55d8c8;color:#101010}
+.btn-logout{background:#e05252;color:#fff;padding:9px 14px;border-radius:8px;border:0;font-weight:700;cursor:pointer;margin-top:10px}
+#loginMessage{margin-top:12px;font-size:13px;min-height:20px}
+
+@media(max-width:700px){.cards{grid-template-columns:1fr}.card p{min-height:0}.payment{grid-template-columns:1fr}.payment .qr{max-width:230px}.hero{padding:38px 0 18px}.section-title{margin-top:28px}}
+</style>
+</head>
+<body>
+<header><div class="container"><nav>
+  <div class="logo">DPI <span>SUPER</span></div>
+  <a href="#payment">Thanh toán</a>
+</nav></div></header>
+
+<main class="container">
+  <section class="hero">
+    <h1>DPI SUPER Sanh Gaming</h1>
+  </section>
+
+  <div class="section-title" id="versions">
+    <h2>Bảng giá</h2>
+    <p>Ba lựa chọn — thông tin rõ ràng, dễ tham khảo.</p>
+  </div>
+
+  <section class="cards">
+    <article class="card">
+      <div class="label">BẢN THƯỜNG</div>
+      <div class="price">100.000 <small>VND</small></div>
+      <p>Gói cơ bản dành cho người mới bắt đầu.</p>
+      <ul><li>Kéo tâm chuẩn hơn</li><li>Headshot dễ dàng hơn</li><li>Hỗ trợ tăng tỉ lệ hạ gục</li><li>Phù hợp cho người mới</li></ul>
+      <button class="btn" onclick="selectPlan('DPI 100')">Chọn gói</button>
+    </article>
+    <article class="card pro">
+      <div class="label">BẢN PRO</div>
+      <div class="price">300.000 <small>VND</small></div>
+      <p>Gói tùy chỉnh nâng cao theo thiết bị.</p>
+      <ul><li>Mức quảng bá: Full đỏ 80%</li><li>Hướng dẫn theo thiết bị</li><li>Hỗ trợ cấu hình cá nhân</li></ul>
+      <button class="btn" onclick="selectPlan('DPI 300')">Chọn gói</button>
+    </article>
+    <article class="card">
+      <div class="label">BẢN PRO MAX</div>
+      <div class="price">500.000 <small>VND</small></div>
+      <p>Gói nâng cao với hướng dẫn quản lý cấu hình.</p>
+      <ul><li>Mức quảng bá: Full đỏ 100000%</li><li>Kiểm tra thiết bị</li><li>Hướng dẫn khôi phục</li></ul>
+      <button class="btn" onclick="selectPlan('DPI 500')">Chọn gói</button>
+    </article>
+  </section>
+
+  <div class="section-title" id="payment">
+    <h2>Thanh toán</h2>
+    <p>Quét mã QR và xác nhận thông tin người nhận trước khi chuyển khoản.</p>
+  </div>
+  <section class="payment">
+    <div>
+      <h3>Mã QR thanh toán</h3>
+      <p>Sau khi quét, vui lòng kiểm tra đúng tên người nhận, ngân hàng và số tiền. Chỉ xác nhận giao dịch khi thông tin chính xác.</p>
+      <div class="devices"><span>iOS</span><span>Android</span><span>Windows PC</span></div>
+      <p class="small">Website giới thiệu độc lập, không liên kết với Garena. Các tỷ lệ hiệu quả nêu trên là thông tin quảng bá, chưa được xác minh độc lập.</p>
+    </div>
+    <img class="qr" src="payment-qr.png" alt="Mã QR thanh toán">
+  </section>
+
+  <div class="login-box" id="loginBox">
+    <h2>Đăng nhập</h2>
+    <div id="loginForm">
+      <input id="email" type="email" placeholder="Địa chỉ email">
+      <input id="password" type="password" placeholder="Mật khẩu">
+      <div class="auth-actions">
+        <button type="button" class="btn-register" onclick="registerUser()">Đăng ký</button>
+        <button type="button" class="btn-login" onclick="loginUser()">Đăng nhập</button>
+      </div>
+    </div>
+    <div id="userInfo" style="display:none">
+      <p>Đang đăng nhập với tài khoản: <strong id="currentUserEmail"></strong></p>
+      <button type="button" class="btn-logout" onclick="logoutUser()">Đăng xuất</button>
+    </div>
+    <p id="loginMessage"></p>
+  </div>
+</main>
+
+<footer><div class="container">© 2026 DPI SUPER · Sanh Gaming.</div></footer>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="dialog">
+    <button class="close" onclick="closeModal()">×</button>
+    <h3 id="dialogTitle">Chọn gói</h3>
+    <p style="color:#aaa;font-size:13px">Đây là giao diện minh họa. Hệ thống chưa xác thực mã kích hoạt hoặc xử lý đơn hàng tự động.</p>
+    <input id="activationCode" placeholder="Mã kích hoạt (nếu có)">
+    <button class="btn" onclick="alert('Đây là bản demo, chưa kết nối máy chủ xác thực.')">Tiếp tục</button>
+  </div>
+</div>
+
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+  const modal = document.getElementById('modal');
+  function selectPlan(name) {
+    document.getElementById('dialogTitle').textContent = 'Bạn chọn ' + name;
+    modal.classList.add('show');
+  }
+  function closeModal() {
+    modal.classList.remove('show');
+  }
+
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyDDWPyKgBigS0vlbyYB2mHEbitfwoNrMnM",
+    authDomain: "dpi-super-sanh.firebaseapp.com",
+    projectId: "dpi-super-sanh",
+    storageBucket: "dpi-super-sanh.firebasestorage.app",
+    messagingSenderId: "71368030682",
+    appId: "1:71368030682:web:30b2af9ee2c8ae561b28e3",
+    measurementId: "G-WHDD8FSQ04"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  function loginUser() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('loginMessage');
+
+    if (!email || !password) {
+      msg.style.color = "#ff7b7b";
+      msg.textContent = "Vui lòng nhập đầy đủ email và mật khẩu.";
+      return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        msg.style.color = "#55d8c8";
+        msg.textContent = "Đăng nhập thành công!";
+      })
+      .catch((error) => {
+        msg.style.color = "#ff7b7b";
+        msg.textContent = "Lỗi đăng nhập: " + error.message;
+      });
+  }
+
+  function registerUser() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('loginMessage');
+
+    if (!email || !password) {
+      msg.style.color = "#ff7b7b";
+      msg.textContent = "Vui lòng nhập đầy đủ email và mật khẩu.";
+      return;
+    }
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        msg.style.color = "#55d8c8";
+        msg.textContent = "Đăng ký tài khoản thành công!";
+      })
+      .catch((error) => {
+        msg.style.color = "#ff7b7b";
+        msg.textContent = "Lỗi đăng ký: " + error.message;
+      });
+  }
+
+  function logoutUser() {
+    auth.signOut().then(() => {
+      const msg = document.getElementById('loginMessage');
+      msg.style.color = "#ccc";
+      msg.textContent = "Đã đăng xuất.";
+    });
+  }
+
+  auth.onAuthStateChanged((user) => {
+    const loginForm = document.getElementById('loginForm');
+    const userInfo = document.getElementById('userInfo');
+    const currentUserEmail = document.getElementById('currentUserEmail');
+
+    if (user) {
+      loginForm.style.display = "none";
+      userInfo.style.display = "block";
+      currentUserEmail.textContent = user.email;
+    } else {
+      loginForm.style.display = "block";
+      userInfo.style.display = "none";
+      currentUserEmail.textContent = "";
+    }
+  });
+</script>
+</body>
+</html>
