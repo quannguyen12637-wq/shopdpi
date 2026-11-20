@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101010">
+<title>DPI SUPER — Demo</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:82px}
+body{margin:0;background:radial-gradient(ellipse at 50% -18%,rgba(85,216,200,.12),transparent 48%),#101010;color:#f5f5f5;font-family:Arial,Helvetica,sans-serif;line-height:1.6;padding-bottom:78px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #7ce9dc;outline-offset:3px}
+.container{width:min(100% - 32px,980px);margin:auto}
+
+/* Header & Top Nav */
+header{position:sticky;top:0;z-index:30;background:rgba(20,20,20,.88);backdrop-filter:blur(12px);border-bottom:1px solid rgba(124,233,220,.16)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;position:relative}
+.nav-left{display:flex;align-items:center;gap:12px}
+.menu-btn,.user-btn{width:40px;height:40px;border-radius:9px;border:1px solid #383838;background:#1c1c1c;color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center}
+.user-btn:hover,.menu-btn:hover{border-color:#55d8c8;color:#55d8c8;box-shadow:0 0 10px rgba(85,216,200,.35)}
+.logo{font-size:20px;font-weight:800;letter-spacing:1px;text-decoration:none;color:#fff}
+.logo span{color:#55d8c8;text-shadow:0 0 12px rgba(85,216,200,.55)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-links{display:flex;gap:10px;align-items:center}
+.nav-links a{color:#e6e6e6;text-decoration:none;font-size:14px;padding:8px 12px;border:1px solid #353535;border-radius:8px;transition:.2s}
+.nav-links a:hover{border-color:#55d8c8;color:#55d8c8;box-shadow:0 0 10px rgba(85,216,200,.28)}
+
+/* Account Dropdown Popover */
+.account-dropdown{display:none;position:absolute;top:60px;right:0;width:210px;background:#1b1b1b;border:1px solid #3a3a3a;border-radius:12px;padding:8px;box-shadow:0 10px 26px #00000099;z-index:45}
+.account-dropdown.open{display:flex;flex-direction:column;gap:4px}
+.account-dropdown button{width:100%;background:none;border:0;color:#f2f2f2;padding:11px 12px;border-radius:8px;font-size:14px;font-weight:600;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px}
+.account-dropdown button:hover{background:#252525;color:#55d8c8}
+.account-email-tag{padding:8px 12px;font-size:12px;color:#55d8c8;border-bottom:1px solid #2b2b2b;margin-bottom:4px;word-break:break-all}
+
+/* Slide-out Drawer Menu */
+.drawer-backdrop{display:none;position:fixed;inset:0;background:#000000a6;z-index:50}
+.drawer-backdrop.open{display:block}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(82vw,310px);background:#171717;border-right:1px solid #2e2e2e;z-index:60;transform:translateX(-100%);transition:transform .22s ease;display:flex;flex-direction:column;padding:18px}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid #2b2b2b}
+.drawer-close{background:#242424;color:#fff;border:1px solid #3b3b3b;border-radius:8px;width:34px;height:34px;font-size:18px;cursor:pointer}
+.drawer-list{list-style:none;padding:0;margin:14px 0;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.drawer-list a,.drawer-list button{width:100%;text-align:left;background:#1f1f1f;border:1px solid #2f2f2f;color:#f0f0f0;padding:12px 14px;border-radius:10px;font-size:14px;text-decoration:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.drawer-list a:hover,.drawer-list button:hover{border-color:#55d8c8;color:#55d8c8}
+.drawer-sub{margin-left:12px;display:none;flex-direction:column;gap:6px;margin-top:4px}
+.drawer-sub.open{display:flex}
+.drawer-sub a{background:#151515;font-size:13px;padding:10px 12px;color:#ccc}
+
+/* Hero & Sections */
+.hero{text-align:center;padding:50px 0 30px}
+.hero h1{font-size:clamp(28px,6.5vw,46px);line-height:1.15;margin:0;text-shadow:0 3px 28px rgba(85,216,200,.24);letter-spacing:.02em}
+.hero p{color:#aaa;margin:0 auto;max-width:560px;font-size:14px}
+.section-title{text-align:center;margin:34px 0 20px}
+.section-title h2{font-size:clamp(22px,4vw,27px);margin:0 0 8px;letter-spacing:.01em}
+.section-title h2::after{content:"";display:block;width:42px;height:3px;margin:9px auto 0;border-radius:3px;background:linear-gradient(90deg,#55d8c8,#9af0df)}
+.section-title p{color:#b4b4b4;font-size:14px;margin:0}
+
+/* Pricing Cards + Glowing Borders */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{
+  background:linear-gradient(150deg,rgba(32,43,42,.96),rgba(25,25,25,.98) 55%);
+  border:1px solid rgba(85,216,200,.3);
+  border-radius:16px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.2),
+    inset 0 1px rgba(255,255,255,.035);
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  border-color:#55d8c8;
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.3),
+    0 0 18px rgba(85,216,200,.16),
+    inset 0 1px rgba(255,255,255,.05);
+}
+.card.pro{
+  border-color:rgba(85,216,200,.62);
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.24),
+    0 0 18px rgba(85,216,200,.16),
+    inset 0 1px rgba(255,255,255,.05);
+}
+.card.pro:hover{
+  box-shadow:
+    0 14px 36px rgba(0,0,0,.3),
+    0 0 22px rgba(85,216,200,.22),
+    inset 0 1px rgba(255,255,255,.06);
+}
+
+/* Tùy chọn nhấp nháy nhẹ cho thẻ (thêm class glow-pulse nếu muốn) */
+@keyframes neonCardPulse{
+  0%,100%{
+    box-shadow:0 12px 32px rgba(0,0,0,.24),0 0 12px rgba(85,216,200,.12);
+  }
+  50%{
+    box-shadow:0 12px 32px rgba(0,0,0,.24),0 0 18px rgba(85,216,200,.22);
+  }
+}
+.glow-pulse{
+  border-color:rgba(85,216,200,.62);
+  animation:neonCardPulse 5s infinite ease-in-out;
+}
+
+.label{font-size:12px;color:#78e5d7;font-weight:bold;letter-spacing:1.2px}
+.price{font-size:clamp(28px,4vw,34px);font-weight:800;margin:8px 0;color:#fff}
+.price small{font-size:13px;color:#aaa}
+.card p{font-size:13px;color:#bbb;margin:0 0 10px}
+.card ul{padding-left:18px;color:#ccc;font-size:13px;margin:0 0 auto}
+.card li{margin:6px 0}
+.btn{
+  display:block;text-align:center;background:linear-gradient(120deg,#65e3d4,#55d8c8);color:#101010;font-weight:700;
+  padding:11px;border-radius:8px;margin-top:16px;border:0;cursor:pointer;width:100%;
+  font-size:14px;text-decoration:none;box-shadow:0 5px 14px rgba(85,216,200,.2);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(85,216,200,.32);filter:brightness(1.04)}
+.btn:active{transform:translateY(0)}
+
+/* Payment */
+.payment{
+  display:grid;grid-template-columns:1fr 260px;gap:22px;align-items:center;
+  background:linear-gradient(145deg,rgba(31,42,41,.9),#191919 58%);border:1px solid rgba(85,216,200,.28);border-radius:16px;padding:22px;
+  box-shadow:0 14px 34px rgba(0,0,0,.22)
+}
+.payment-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.payment h3{margin:0;font-size:20px}
+.payment-balance{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:7px 10px;border:1px solid rgba(85,216,200,.28);border-radius:10px;background:rgba(85,216,200,.08);line-height:1.2;white-space:nowrap}
+.payment-balance span{font-size:10px;color:#a8b8b5;font-weight:700;letter-spacing:.6px}
+.payment-balance strong{font-size:14px;color:#78e5d7}
+.payment p{font-size:14px;color:#bbb;margin:0 0 10px}
+.payment .deposit-note{padding:10px 12px;border-left:3px solid #55d8c8;border-radius:0 8px 8px 0;background:rgba(85,216,200,.08);color:#d4f7f2}
+.qr{width:100%;max-width:240px;background:#fff;padding:8px;border-radius:12px;display:block;margin:auto;box-shadow:0 10px 28px rgba(0,0,0,.28);transition:transform .25s ease,box-shadow .25s ease}
+.qr:hover{transform:scale(1.02);box-shadow:0 12px 30px rgba(85,216,200,.18)}
+.small{font-size:12px;color:#888}
+.devices{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.devices span{border:1px solid #444;border-radius:7px;padding:7px 12px;font-size:13px;color:#ccc}
+/* Auth Status Strip */
+.auth-strip{max-width:520px;margin:30px auto 0;background:#191919;border:1px solid #343434;border-radius:13px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.auth-strip-text{font-size:13px;color:#ccc}
+.auth-strip-actions{display:flex;gap:8px}
+.btn-sm{padding:8px 13px;border-radius:8px;border:0;font-weight:700;font-size:13px;cursor:pointer}
+.btn-sm-ghost{background:#252525;color:#fff;border:1px solid #3d3d3d}
+.btn-sm-accent{background:#55d8c8;color:#101010}
+.btn-sm-danger{background:#e05252;color:#fff}
+
+/* Footer Info Section */
+.site-footer{margin-top:44px;background:#151515;border-top:1px solid #292929;padding:28px 0 22px}
+.footer-intro{color:#bdbdbd;font-size:14px;margin:0 0 24px;max-width:760px}
+.footer-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:24px 32px}
+.footer-col h3{margin:0 0 14px;font-size:17px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.footer-col h3::before{content:"";width:3px;height:18px;background:#55d8c8;border-radius:2px;display:inline-block;box-shadow:0 0 8px rgba(85,216,200,.6)}
+.footer-links{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.footer-links a{color:#b5b5b5;text-decoration:none;font-size:14px;display:inline-block}
+.footer-links a:hover{color:#55d8c8}
+.contact-line{color:#ccc;font-size:14px;margin:0 0 14px}
+.social-row{display:flex;gap:10px;flex-wrap:wrap}
+.social-btn{display:inline-flex;align-items:center;gap:8px;background:#1f1f1f;border:1px solid #383838;color:#fff;text-decoration:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700}
+.social-btn:hover{border-color:#55d8c8;color:#55d8c8;box-shadow:0 0 10px rgba(85,216,200,.25)}
+.social-icon{width:24px;height:24px;display:block;flex:none}
+.social-icon.facebook{border-radius:6px;box-shadow:0 2px 6px #0005}
+.social-icon.zalo{filter:drop-shadow(0 2px 3px #0005)}
+.copyright{margin-top:26px;padding-top:16px;border-top:1px solid #262626;color:#7e7e7e;font-size:12px;text-align:center}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+/* Floating Right Buttons */
+.float-actions{position:fixed;right:14px;bottom:84px;z-index:35;display:flex;flex-direction:column;gap:8px}
+.float-btn{width:42px;height:42px;border-radius:50%;background:#1e1e1e;border:1px solid #3c3c3c;color:#55d8c8;font-size:12px;font-weight:800;text-decoration:none;display:grid;place-items:center;box-shadow:0 4px 12px #00000070;cursor:pointer}
+.float-btn .social-icon{width:25px;height:25px}
+.float-btn:hover{border-color:#55d8c8;background:#262626;box-shadow:0 0 12px rgba(85,216,200,.4)}
+.back-to-top{opacity:0;visibility:hidden;transform:translateY(6px);pointer-events:none;transition:opacity .2s ease,transform .2s ease,visibility .2s}
+.back-to-top.visible{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+
+/* Bottom Sticky Bar */
+.bottom-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#161616;border-top:1px solid #2c2c2c;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px 12px;gap:8px}
+.bottom-item{color:#d8d8d8;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:700;letter-spacing:.3px;padding:4px;border-radius:8px;background:none;border:0;cursor:pointer}
+.bottom-item:hover{color:#55d8c8}
+.bottom-center{background:#55d8c8;color:#101010;font-weight:800;font-size:13px;letter-spacing:.6px;padding:10px 16px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;box-shadow:0 0 14px rgba(85,216,200,.45)}
+
+/* Modals (Plan + Auth) */
+.modal{display:none;position:fixed;inset:0;background:#000000bf;align-items:center;justify-content:center;padding:18px;z-index:70}
+.modal.show{display:flex}
+.dialog{background:#1c1c1c;border:1px solid rgba(85,216,200,.45);border-radius:14px;overflow:hidden;width:min(100%,410px);position:relative;box-shadow:0 0 24px rgba(85,216,200,.2)}
+.dialog-banner{background:#162527;border-bottom:1px solid #2b3f42;padding:18px 20px;text-align:center}
+.dialog-banner h3{margin:0 0 4px;font-size:21px;color:#fff}
+.dialog-banner p{margin:0;font-size:13px;color:#b8c7c9}
+.dialog-body{padding:20px}
+.field-label{display:block;font-size:11px;font-weight:700;letter-spacing:.8px;color:#aaa;margin-bottom:6px;text-transform:uppercase}
+.input-wrap{position:relative;margin-bottom:12px}
+.dialog input{width:100%;padding:11px 40px 11px 12px;background:#111111;border:1px solid #3c3c3c;border-radius:9px;color:#fff;font-size:14px}
+.dialog input:focus{outline:none;border-color:#55d8c8;box-shadow:0 0 8px rgba(85,216,200,.35)}
+.eye-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:#aaa;font-size:13px;font-weight:700;cursor:pointer;padding:4px 6px}
+.eye-btn:hover{color:#55d8c8}
+.close{position:absolute;right:12px;top:10px;background:#242424;border:1px solid #3c3c3c;border-radius:8px;width:32px;height:32px;color:#ccc;font-size:18px;cursor:pointer;line-height:1}
+.switch-auth{margin-top:14px;text-align:center;font-size:13px;color:#aaa}
+.switch-auth button{background:none;border:0;color:#55d8c8;font-weight:700;cursor:pointer;padding:0;font-size:13px;text-decoration:underline}
+#authModalMsg{margin-top:12px;font-size:13px;min-height:18px}
+
+@media(max-width:760px){
+  .cards{grid-template-columns:1fr}
+  .payment{grid-template-columns:1fr}
+  .payment .qr{max-width:220px}
+  .nav-links a.hide-sm{display:none}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="logo">DPI <span>SUPER</span></div>
+    <button type="button" class="drawer-close" onclick="closeDrawer()">×</button>
+  </div>
+  <ul class="drawer-list">
+    <li><a href="#top" onclick="closeDrawer()">Trang chủ</a></li>
+    <li><button type="button" onclick="openAuthModal('login'); closeDrawer()"><span>Đăng nhập</span><span>→</span></button></li>
+    <li><button type="button" onclick="openAuthModal('register'); closeDrawer()"><span>Đăng ký</span><span>+</span></button></li>
+    <li><a href="#payment" onclick="closeDrawer()">Nạp tiền / QR</a></li>
+    <li><a href="#versions" onclick="closeDrawer()">Bảng gói DPI</a></li>
+    <li>
+      <button type="button" onclick="toggleSub('subGoi')">
+        <span>Danh mục gói</span>
+        <span>▾</span>
+      </button>
+      <div class="drawer-sub" id="subGoi">
+        <a href="#versions" onclick="selectPlan('DPI 100'); closeDrawer()">Bản Thường — 100.000 VND</a>
+        <a href="#versions" onclick="selectPlan('DPI 300'); closeDrawer()">Bản Pro — 300.000 VND</a>
+        <a href="#versions" onclick="selectPlan('DPI 500'); closeDrawer()">Bản Pro Max — 500.000 VND</a>
+      </div>
+    </li>
+    <li><a href="#about" onclick="closeDrawer()">Giới thiệu</a></li>
+  </ul>
+</aside>
+
+<header id="top">
+  <div class="container">
+    <div class="topbar">
+      <div class="nav-left">
+        <button type="button" class="menu-btn" aria-label="Mở menu" onclick="openDrawer()">☰</button>
+        <a class="logo" href="#top">DPI <span>SUPER</span></a>
+      </div>
+      <div class="nav-right">
+        <button type="button" class="user-btn" id="headerUserBtn" aria-label="Tài khoản" onclick="toggleAccountDropdown(event)">👤</button>
+      </div>
+
+      <div class="account-dropdown" id="accountDropdown">
+        <div class="account-email-tag" id="dropdownUserEmail" style="display:none"></div>
+        <button type="button" id="ddLoginBtn" onclick="openAuthModal('login'); closeAccountDropdown()">→ Đăng nhập</button>
+        <button type="button" id="ddRegisterBtn" onclick="openAuthModal('register'); closeAccountDropdown()">+ Đăng ký</button>
+        <button type="button" id="ddLogoutBtn" style="display:none;color:#ff8585" onclick="logoutUser(); closeAccountDropdown()">× Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>DPI SUPER Sanh Gaming</h1>
+  </section>
+
+  <div class="section-title" id="versions">
+    <h2>Bảng giá</h2>
+    <p>Ba lựa chọn — thông tin rõ ràng, dễ tham khảo.</p>
+  </div>
+
+  <section class="cards">
+    <article class="card">
+      <div class="label">BẢN THƯỜNG</div>
+      <div class="price">100.000 <small>VND</small></div>
+      <p>Gói cơ bản dành cho người mới bắt đầu.</p>
+      <ul>
+        <li>Kéo tâm chuẩn hơn</li>
+        <li>Headshot dễ dàng hơn</li>
+        <li>Hỗ trợ tăng tỉ lệ hạ gục</li>
+        <li>Phù hợp cho người mới</li>
+      </ul>
+      <button type="button" class="btn" onclick="selectPlan('DPI 100')">Chọn gói</button>
+    </article>
+
+    <article class="card pro glow-pulse">
+      <div class="label">BẢN PRO</div>
+      <div class="price">300.000 <small>VND</small></div>
+      <p>Gói tùy chỉnh nâng cao theo thiết bị.</p>
+      <ul>
+        <li>Mức quảng bá: Full đỏ 80 %</li>
+        <li>Hướng dẫn theo thiết bị</li>
+        <li>Hỗ trợ cấu hình cá nhân</li>
+      </ul>
+      <button type="button" class="btn" onclick="selectPlan('DPI 300')">Chọn gói</button>
+    </article>
+
+    <article class="card">
+      <div class="label">BẢN PRO MAX</div>
+      <div class="price">500.000 <small>VND</small></div>
+      <p>Gói nâng cao với hướng dẫn quản lý cấu hình.</p>
+      <ul>
+        <li>Mức quảng bá: Full đỏ 90 %</li>
+        <li>Kiểm tra thiết bị</li>
+        <li>Hướng dẫn khôi phục</li>
+      </ul>
+      <button type="button" class="btn" onclick="selectPlan('DPI 500')">Chọn gói</button>
+    </article>
+  </section>
+
+  <div class="section-title" id="payment">
+    <h2>Thanh toán</h2>
+    <p>Quét mã QR và xác nhận thông tin người nhận trước khi chuyển khoản.</p>
+  </div>
+
+  <section class="payment">
+    <div>
+      <div class="payment-heading">
+        <h3>Mã QR thanh toán</h3>
+        <div class="payment-balance" aria-label="Số dư mẫu: 0 VND">
+          <span>SỐ DƯ · DEMO</span>
+          <strong>0 VND</strong>
+        </div>
+      </div>
+      <p>STK:9999955259999</p>
+      <p>Chủ tài khoản:VO XUAN LOC</p>
+      <p>Ngân hang:MB Bank</p>
+
+      <p>Nội dung: Máy kèm tên zalo</p>
+      <p>Sau khi quét, vui lòng kiểm tra đúng tên người nhận, ngân hàng và số tiền. Chỉ xác nhận giao dịch khi thông tin chính xác.</p>
+      <p class="deposit-note">Phần tiền chuyển dư sẽ được cộng vào khoản nạp sau khi xác nhận. Ô số dư chỉ mang tính minh họa, chưa đồng bộ với giao dịch.</p>
+      <div class="devices"><span>iOS</span><span>Android</span><span>Windows PC</span></div>
+      <p class="small">LỘC GAY</p>
+    </div>
+    <img class="qr" src="voxuanlocbank.img.png" alt="Mã QR thanh toán">
+  </section>
+
+  <div class="auth-strip" id="authStrip">
+    <div class="auth-strip-text" id="authStripStatus">Chưa đăng nhập tài khoản.</div>
+    <div class="auth-strip-actions" id="authStripGuestActions">
+      <button type="button" class="btn-sm btn-sm-ghost" onclick="openAuthModal('register')">Đăng ký</button>
+      <button type="button" class="btn-sm btn-sm-accent" onclick="openAuthModal('login')">Đăng nhập</button>
+    </div>
+    <div class="auth-strip-actions" id="authStripUserActions" style="display:none">
+      <button type="button" class="btn-sm btn-sm-danger" onclick="logoutUser()">Đăng xuất</button>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer" id="about">
+  <div class="container">
+    <p class="footer-intro">
+      DPI SUPER Sanh Gaming — Trang giới thiệu &amp; demo cấu hình tham khảo, thông tin minh bạch, thao tác nhanh chóng và hỗ trợ người dùng trên nhiều thiết bị.
+    </p>
+
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h3>Về Chúng Tôi</h3>
+        <ul class="footer-links">
+          <li><a href="#about">Giới Thiệu</a></li>
+          <li><a href="#payment">Điều Khoản Sử Dụng</a></li>
+          <li><a href="#authStrip">Chính Sách Bảo Mật</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Dịch Vụ Khác</h3>
+        <ul class="footer-links">
+          <li><a href="#versions" onclick="selectPlan('DPI 100')">GÓI BẢN THƯỜNG | 100.000 VND</a></li>
+          <li><a href="#versions" onclick="selectPlan('DPI 300')">GÓI BẢN PRO | 300.000 VND</a></li>
+          <li><a href="#versions" onclick="selectPlan('DPI 500')">GÓI BẢN PRO MAX | 500.000 VND</a></li>
+          <li><a href="#payment">HƯỚNG DẪN THANH TOÁN QR</a></li>
+          <li><a href="#authStrip">QUẢN LÝ TÀI KHOẢN</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Liên Hệ &amp; Kết Nối</h3>
+        <p class="contact-line">Hotline / Zalo hỗ trợ: cập nhật số liên hệ của bạn</p>
+        <div class="social-row">
+          <a class="social-btn" href="#top">
+            <svg class="social-icon facebook" viewBox="0 0 24 24" role="img" aria-label="Facebook">
+              <rect width="24" height="24" rx="6" fill="#1877F2"/>
+              <path fill="#fff" d="M13.6 20v-7.3h2.5l.4-2.9h-2.9V8c0-.8.2-1.4 1.5-1.4h1.5V4a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8.2v2.9h2.5V20z"/>
+            </svg>
+            <span>Facebook</span>
+          </a>
+          <a class="social-btn" href="#payment">
+            <svg class="social-icon zalo" viewBox="0 0 48 48" role="img" aria-label="Zalo">
+              <path fill="#0068FF" d="M24 3C12.4 3 3 11.2 3 21.3c0 5.7 3 10.8 7.8 14.1L9 44l10-4.1c1.6.4 3.3.6 5 .6 11.6 0 21-8.2 21-18.2S35.6 3 24 3z"/>
+              <text x="24" y="26" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700" text-anchor="middle">Zalo</text>
+            </svg>
+            <span>Zalo</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="copyright">© 2026 DPI SUPER · Sanh Gaming. Website demo độc lập.</div>
+  </div>
+</footer>
+
+<div class="float-actions">
+  <a class="float-btn" href="#top" title="Facebook" aria-label="Facebook">
+    <svg class="social-icon facebook" viewBox="0 0 24 24" aria-hidden="true">
+      <rect width="24" height="24" rx="6" fill="#1877F2"/>
+      <path fill="#fff" d="M13.6 20v-7.3h2.5l.4-2.9h-2.9V8c0-.8.2-1.4 1.5-1.4h1.5V4a20 20 0 0 0-2.2-.1c-2.2 0-3.7 1.3-3.7 3.8v2.1H8.2v2.9h2.5V20z"/>
+    </svg>
+  </a>
+  <a class="float-btn" href="#payment" title="Zalo" aria-label="Zalo">
+    <svg class="social-icon zalo" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#0068FF" d="M24 3C12.4 3 3 11.2 3 21.3c0 5.7 3 10.8 7.8 14.1L9 44l10-4.1c1.6.4 3.3.6 5 .6 11.6 0 21-8.2 21-18.2S35.6 3 24 3z"/>
+      <text x="24" y="26" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700" text-anchor="middle">Zalo</text>
+    </svg>
+  </a>
+  <a class="float-btn back-to-top" id="backToTopBtn" href="#top" title="Lên đầu trang" aria-label="Lên đầu trang">^</a>
+</div>
+
+<nav class="bottom-bar" aria-label="Thanh điều hướng nhanh">
+  <a class="bottom-item" href="#payment">
+    <span>QR</span>
+    <span>NẠP TIỀN</span>
+  </a>
+  <a class="bottom-center" href="#top">DPI SUPER</a>
+  <button type="button" class="bottom-item" onclick="openHistoryNotice()">
+    <span>LỊCH</span>
+    <span>LỊCH SỬ MUA</span>
+  </button>
+</nav>
+
+<!-- Modal Chọn gói / Thông báo -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="dialog">
+    <button type="button" class="close" onclick="closeModal()">×</button>
+    <div class="dialog-banner">
+      <h3 id="dialogTitle">Chọn gói</h3>
+      <p id="dialogDesc">DEMO MÀ ĐÒI CÓ À CÓ CC</p>
+    </div>
+    <div class="dialog-body">
+      <div id="activationWrap">
+        <label class="field-label" for="activationCode">Mã kích hoạt</label>
+        <div class="input-wrap" style="margin-bottom:0">
+          <input id="activationCode" placeholder="Nhập mã kích hoạt (nếu có)">
+        </div>
+      </div>
+      <button type="button" class="btn" onclick="alert('DEMO MÀ ĐÒI CÓ À CÓ CC.')">Tiếp tục</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Đăng nhập / Tạo tài khoản -->
+<div class="modal" id="authModal" onclick="if(event.target===this)closeAuthModal()">
+  <div class="dialog">
+    <button type="button" class="close" onclick="closeAuthModal()">×</button>
+    <div class="dialog-banner">
+      <h3 id="authModalTitle">ĐĂNG NHẬP</h3>
+      <p id="authModalSub">Chào mừng bạn đến tới Sanh </p>
+    </div>
+    <div class="dialog-body">
+      <div id="usernameFieldWrap" style="display:none">
+        <label class="field-label" for="usernameInput">Tên người dùng</label>
+        <div class="input-wrap">
+          <input id="usernameInput" type="text" placeholder="Tối thiểu 6 ký tự...">
+        </div>
+      </div>
+
+      <label class="field-label" for="email">Địa chỉ email</label>
+      <div class="input-wrap">
+        <input id="email" type="email" placeholder="example@gmail.com">
+      </div>
+
+      <label class="field-label" for="password">Mật khẩu</label>
+      <div class="input-wrap">
+        <input id="password" type="password" placeholder="••••••••">
+        <button type="button" class="eye-btn" id="togglePassBtn" onclick="togglePasswordVisibility()">Hiện</button>
+      </div>
+
+      <button type="button" class="btn" id="authSubmitBtn" onclick="submitAuth()">ĐĂNG NHẬP NGAY</button>
+
+      <div class="switch-auth" id="switchToRegister">
+        Bạn chưa có tài khoản? <button type="button" onclick="setAuthMode('register')">Đăng ký ngay</button>
+      </div>
+      <div class="switch-auth" id="switchToLogin" style="display:none">
+        Đã có tài khoản? <button type="button" onclick="setAuthMode('login')">Đăng nhập tại đây</button>
+      </div>
+
+      <p id="authModalMsg"></p>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+const backToTopBtn = document.getElementById('backToTopBtn');
+function updateBackToTopVisibility(){
+  backToTopBtn.classList.toggle('visible', window.scrollY > 240);
+}
+window.addEventListener('scroll', updateBackToTopVisibility, {passive:true});
+updateBackToTopVisibility();
+backToTopBtn.addEventListener('click', (event) => {
+  event.preventDefault();
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    window.scrollTo(0, 0);
+  } else {
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+});
+
+// Drawer menu
+const drawer = document.getElementById('drawer');
+const backdrop = document.getElementById('drawerBackdrop');
+function openDrawer(){drawer.classList.add('open');backdrop.classList.add('open')}
+function closeDrawer(){drawer.classList.remove('open');backdrop.classList.remove('open')}
+function toggleSub(id){document.getElementById(id).classList.toggle('open')}
+
+// Account dropdown
+const accountDropdown = document.getElementById('accountDropdown');
+function toggleAccountDropdown(e){
+  e.stopPropagation();
+  accountDropdown.classList.toggle('open');
+}
+function closeAccountDropdown(){
+  accountDropdown.classList.remove('open');
+}
+document.addEventListener('click', function(e){
+  if(!accountDropdown.contains(e.target) && e.target.id !== 'headerUserBtn'){
+    closeAccountDropdown();
+  }
+});
+
+// Plan & notice modal
+const modal = document.getElementById('modal');
+function selectPlan(name){
+  document.getElementById('dialogTitle').textContent='Bạn chọn '+name;
+  document.getElementById('dialogDesc').textContent='Đây là bản demo giao diện. Chưa có hệ thống tự động kích hoạt mã.';
+  document.getElementById('activationWrap').style.display='block';
+  modal.classList.add('show');
+}
+function openHistoryNotice(){
+  document.getElementById('dialogTitle').textContent='Lịch sử mua';
+  document.getElementById('dialogDesc').textContent='Bản demo hiện chưa kết nối cơ sở dữ liệu lịch sử đơn hàng.';
+  document.getElementById('activationWrap').style.display='none';
+  modal.classList.add('show');
+}
+function closeModal(){modal.classList.remove('show')}
+
+// Auth modal & Firebase
+const authModal = document.getElementById('authModal');
+let authMode = 'login';
+
+function setAuthMode(mode){
+  authMode = mode;
+  const isRegister = mode === 'register';
+  document.getElementById('authModalTitle').textContent = isRegister ? 'TẠO TÀI KHOẢN' : 'ĐĂNG NHẬP';
+  document.getElementById('authModalSub').textContent = isRegister
+    ? 'Vui lòng cung cấp thông tin để tham gia cùng chúng tôi'
+    : 'Chào mừng bạn quay trở lại với DPI SUPER';
+  document.getElementById('usernameFieldWrap').style.display = isRegister ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent = isRegister ? 'TẠO TÀI KHOẢN' : 'ĐĂNG NHẬP NGAY';
+  document.getElementById('switchToRegister').style.display = isRegister ? 'none' : 'block';
+  document.getElementById('switchToLogin').style.display = isRegister ? 'block' : 'none';
+  document.getElementById('authModalMsg').textContent = '';
+}
+
+function openAuthModal(mode){
+  setAuthMode(mode || 'login');
+  authModal.classList.add('show');
+}
+
+function closeAuthModal(){
+  authModal.classList.remove('show');
+}
+
+function togglePasswordVisibility(){
+  const input = document.getElementById('password');
+  const btn = document.getElementById('togglePassBtn');
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  btn.textContent = isPass ? 'Ẩn' : 'Hiện';
+}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDDWPyKgBIgS0vlbyYB2mhEbitfwoNrMnM",
+  authDomain: "dpi-super-sanh.firebaseapp.com",
+  projectId: "dpi-super-sanh",
+  storageBucket: "dpi-super-sanh.firebasestorage.app",
+  messagingSenderId: "71368030682",
+  appId: "1:71368030682:web:30b2af9ee2c8ae561b28e3",
+  measurementId: "G-WHDD8FSQ04"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+function submitAuth(){
+  const username = document.getElementById('usernameInput').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('authModalMsg');
+
+  if(!email || !password){
+    msg.style.color = '#ff7b7b';
+    msg.textContent = 'Vui lòng nhập đầy đủ email và mật khẩu.';
+    return;
+  }
+
+  if(authMode === 'register'){
+    if(username && username.length < 6){
+      msg.style.color = '#ff7b7b';
+      msg.textContent = 'Tên người dùng tối thiểu 6 ký tự.';
+      return;
+    }
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((cred) => {
+        if(username && cred.user){
+          return cred.user.updateProfile({ displayName: username });
+        }
+      })
+      .then(() => {
+        msg.style.color = '#55d8c8';
+        msg.textContent = '✅ Đăng ký tài khoản thành công!';
+        setTimeout(closeAuthModal, 700);
+      })
+      .catch((error) => {
+        msg.style.color = '#ff7b7b';
+        msg.textContent = `Lỗi [${error.code}]: ${error.message}`;
+      });
+  } else {
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        msg.style.color = '#55d8c8';
+        msg.textContent = '✅ Đăng nhập thành công!';
+        setTimeout(closeAuthModal, 700);
+      })
+      .catch((error) => {
+        msg.style.color = '#ff7b7b';
+        msg.textContent = `Lỗi [${error.code}]: ${error.message}`;
+      });
+  }
+}
+
+function logoutUser(){
+  auth.signOut().then(() => {
+    document.getElementById('authStripStatus').textContent = 'Đã đăng xuất.';
+  });
+}
+
+auth.onAuthStateChanged((user) => {
+  const statusEl = document.getElementById('authStripStatus');
+  const guestActions = document.getElementById('authStripGuestActions');
+  const userActions = document.getElementById('authStripUserActions');
+  const ddEmail = document.getElementById('dropdownUserEmail');
+  const ddLogin = document.getElementById('ddLoginBtn');
+  const ddRegister = document.getElementById('ddRegisterBtn');
+  const ddLogout = document.getElementById('ddLogoutBtn');
+
+  if(user){
+    const label = user.displayName ? `${user.displayName} (${user.email})` : user.email;
+    statusEl.innerHTML = `Đang đăng nhập: <strong style="color:#55d8c8">${label}</strong>`;
+    guestActions.style.display = 'none';
+    userActions.style.display = 'flex';
+    ddEmail.style.display = 'block';
+    ddEmail.textContent = label;
+    ddLogin.style.display = 'none';
+    ddRegister.style.display = 'none';
+    ddLogout.style.display = 'block';
+  } else {
+    statusEl.textContent = 'Chưa đăng nhập tài khoản.';
+    guestActions.style.display = 'flex';
+    userActions.style.display = 'none';
+    ddEmail.style.display = 'none';
+    ddEmail.textContent = '';
+    ddLogin.style.display = 'block';
+    ddRegister.style.display = 'block';
+    ddLogout.style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>
